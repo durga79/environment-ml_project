@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data files (optional - uncomment if you don't want to commit datasets)
+# datasets/*.csv
+# datasets/*.pkl
+
+# Results (optional - uncomment if you don't want to commit results)
+# results/figures/*
+# results/metrics/*
+# results/*.pkl
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log
+*.tmp
+*.bak
+
+# Generated files
+generate_notebooks.py
+PROJECT_FILES.txt
+PROJECT_STRUCTURE.txt
+

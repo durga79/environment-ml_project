@@ -1,0 +1,18 @@
+{
+  "logistic_regression": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "cohen_kappa": 1.0,
+    "matthews_corrcoef": 1.0
+  },
+  "svm": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "cohen_kappa": 1.0,
+    "matthews_corrcoef": 1.0
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "correlations": {
+    "aqi_sentiment": -0.005003056256094714,
+    "pm25_sentiment": -0.04946440470594652
+  },
+  "summary_statistics": {
+    "mean_aqi": 92.62903667310053,
+    "mean_pm25": 25.227603088261095,
+    "mean_sentiment": -0.008875943147920685,
+    "total_documents": 206848
+  }
+}
