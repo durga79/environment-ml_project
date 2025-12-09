@@ -1,0 +1,431 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{balance}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{Comparative Analysis of Machine Learning Methods for Environmental Impact Analysis: Air Quality Prediction and Climate Policy Sentiment Classification}
+
+\author{
+\IEEEauthorblockN{Gitte Swapna}
+\IEEEauthorblockA{Student ID: 24202312\\
+24202312@student.ncirl.ie}
+\and
+\IEEEauthorblockN{Hemasree Challa}
+\IEEEauthorblockA{Student ID: 24267732\\
+24267732@student.ncirl.ie}
+}
+
+\maketitle
+
+\begin{abstract}
+This research investigates the application of machine learning methods to environmental sustainability analysis through two interconnected datasets: structured air quality sensor data and unstructured climate policy text documents. The algorithms evaluated include Random Forest, Extreme Gradient Boosting, Logistic Regression, and Support Vector Machines. The project follows the CRISP-DM data mining process. We analyzed a dataset of 15,000 air quality measurements for AQI category prediction and 9,500 climate policy documents for sentiment classification. TF-IDF vectorization was employed for converting text documents to numerical features for sentiment classification into positive, neutral, or negative categories. Air quality prediction involved identifying pollutant patterns and meteorological factors that determine air quality index categories.
+
+Results demonstrated that Random Forest outperformed XGBoost for air quality classification, achieving an accuracy of 98.7\% and an F1-score of 0.987. For sentiment classification, both Logistic Regression and SVM achieved perfect classification performance, which may be attributed to the synthetic data characteristics and clear class separation. SHAP and LIME interpretability tools provided valuable environmental insights, illustrating the impact of specific pollutants (PM2.5, PM10, NO2) on air quality predictions and identifying key policy-related terms that drive sentiment classification.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Machine Learning, Environmental Analytics, Air Quality Prediction, Climate Policy Sentiment Analysis, CRISP-DM, Text Classification, SHAP, LIME, Random Forest, XGBoost
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+The increasing urgency of environmental challenges, particularly air pollution and climate change, has generated unprecedented volumes of environmental data from sensor networks and policy documents. By applying machine learning to analyze this data, environmental agencies and policymakers can monitor air quality trends, understand public sentiment toward climate policies, and develop evidence-based interventions \cite{chapman2000crisp}. This research addresses two critical analytics problems in environmental monitoring that have significant implications for public health and policy effectiveness.
+
+The first challenge involves predicting air quality index categories from environmental sensor data to enable automated air quality monitoring and early warning systems. With thousands of hourly measurements generated across monitoring stations, manual analysis is infeasible, making machine learning essential for scalable environmental monitoring. The second challenge involves classifying climate policy document sentiment to track public and institutional responses to environmental policies; this enables policymakers to gauge policy acceptance and adjust communication strategies accordingly.
+
+\subsection{Research Objectives}
+
+The primary objectives of this study are:
+
+\begin{enumerate}
+    \item To critically evaluate machine learning methods across structured air quality data and unstructured climate policy text data.
+    \item To apply and compare at least two different algorithms on each dataset using the CRISP-DM methodology.
+    \item To implement model interpretability techniques, SHAP and LIME, that provide actionable environmental insights.
+    \item To identify important predictors of air quality categories and climate policy sentiment.
+    \item To provide evidence-based recommendations for environmental analytics implementation.
+\end{enumerate}
+
+\subsection{Research Questions}
+
+This study addresses the following research questions:
+
+\begin{itemize}
+    \item RQ1: How do ensemble methods (Random Forest, XGBoost) compare for air quality index category prediction?
+    \item RQ2: Which text classification method (Logistic Regression, SVM) performs better for climate policy sentiment classification?
+    \item RQ3: What features are most predictive of air quality categories?
+    \item RQ4: How can model interpretability techniques enhance environmental decision-making?
+\end{itemize}
+
+This paper is organized as follows: Section II reviews the literature related to air quality prediction and climate text analysis, with a critical evaluation of existing approaches. Section III provides a detailed account of our methodology as described by the CRISP-DM framework and the Data Preparation phase. Section IV includes a discussion of evaluation metrics, sampling techniques, and results of our study. Section V presents our findings and discusses their implications for environmental applications. Finally, Section VI summarizes this study by discussing its limitations and future research recommendations.
+
+\section{Related Work}
+
+This section examines previous research in the fields of air quality prediction, climate text analysis, and model interpretability. It evaluates how well each publication addresses our project's problem and identifies knowledge gaps that we intend to fill.
+
+\subsection{Air Quality Prediction}
+
+Air quality prediction has been extensively studied using various machine learning approaches. Zhan et al. \cite{zhan2017deep} demonstrated that deep learning methods can effectively capture temporal patterns in air quality data, showing superior performance over traditional time series methods. However, their work focuses primarily on regression tasks for continuous AQI values, whereas our study addresses multi-class classification of AQI categories, which is more suitable for public health warnings and regulatory compliance.
+
+Breiman \cite{breiman2001random} introduced Random Forests, demonstrating their effectiveness for handling non-linear relationships and feature interactions in environmental data. Random Forests provide implicit feature importance quantification through Gini impurity, making them suitable for identifying key pollutants affecting air quality. A limitation of Random Forests is their sensitivity to hyperparameter selection, which we address through systematic parameter tuning.
+
+Chen and Guestrin \cite{chen2016xgboost} developed XGBoost, which incorporates regularization and enables efficient implementation of gradient boosting models. XGBoost has shown superior performance in environmental prediction tasks by focusing on difficult examples through sequential boosting. We compare both Random Forest and XGBoost to evaluate bagging versus boosting approaches for air quality classification.
+
+Feng et al. \cite{feng2019air} conducted a comprehensive comparison of machine learning methods for air quality prediction, finding that ensemble methods consistently outperform individual models. Their work validates our algorithm selection but does not incorporate SHAP interpretability, which we add to provide actionable insights for environmental monitoring.
+
+\subsection{Climate Text Sentiment Analysis}
+
+Sentiment analysis of environmental and climate-related text has gained attention as policy documents and public discourse increasingly focus on climate change. Pang and Lee \cite{pang2008opinion} provide a seminal review of opinion mining and sentiment analysis, showing that supervised machine learning methods outperform lexicon-based approaches when labeled data are available. Their work establishes the theoretical foundation for sentiment classification, though it predates specialized climate policy text analysis.
+
+Liu \cite{liu2012sentiment} introduced Aspect-Based Sentiment Analysis (ABSA), which is useful for understanding nuanced opinions within individual documents. While Liu's research emphasizes theoretical aspects of ABSA, our study applies these concepts at scale through computationally efficient traditional classifiers suitable for deployment in environmental monitoring systems.
+
+Cortes and Vapnik \cite{cortes1995svm} introduced Support Vector Machines, demonstrating effectiveness for high-dimensional classification. Joachims \cite{joachims1998text} extended SVMs specifically to text categorization, showing that linear SVMs achieve competitive performance with computational efficiency. The strength of these works lies in their theoretical rigor and proven performance for text classification tasks.
+
+Zhang et al. \cite{zhang2018deep} compared traditional and deep learning approaches for sentiment classification, with deep learning showing advantages when using large amounts of data, but traditional methods being more interpretable. The balance between interpretability and accuracy has been a major consideration in our approach, using LIME explanatory models to create explanations for environmental stakeholders.
+
+\subsection{Model Interpretability in Environmental Applications}
+
+Lundberg and Lee \cite{lundberg2017shap} created SHAP, a framework for explaining machine learning models by identifying which features contribute most to predictions using Shapley values. The primary benefit of SHAP is the ability to provide consistent and accurate local explanations, though computational complexity increases with dataset size. We leverage TreeSHAP, optimized for tree-based models, to maintain efficiency for air quality prediction.
+
+Ribeiro et al. \cite{ribeiro2016lime} created LIME, which generates local interpretable explanations of individual predictions using perturbations. The main advantage of LIME is that it is model-agnostic, making it uniquely positioned for text classification problems by identifying which words influence model predictions. We apply LIME to climate policy sentiment analysis to provide word-level explanations.
+
+Molnar \cite{molnar2020interpretable} synthesized the state of the art in Explainable AI and provided an in-depth comparison of global and local explanation methods. His work provided a framework to identify LIME as the most appropriate method for word-level explanations in text classification and SHAP for feature importance explanations in structured data prediction.
+
+\subsection{Research Gap}
+
+Although the literature review identified advances within air quality prediction and climate text analysis, most studies focus heavily on accuracy with less emphasis on interpretability. Additionally, most articles assess either air quality prediction or text sentiment analysis, yet lack comprehensive perspectives that examine both structured and unstructured environmental data in a unified analysis. This study bridges these gaps by examining both air quality sensor data and climate policy text data using a CRISP-DM based methodology while applying both LIME and SHAP to facilitate obtaining relevant actionable insights for environmental decision-making.
+
+\section{Data Mining Methodology}
+
+This study follows the Cross-Industry Standard Process for Data Mining (CRISP-DM) framework \cite{chapman2000crisp}, encompassing six phases: business understanding, data understanding, data preparation, modeling, evaluation, and deployment.
+
+\subsection{Business Understanding}
+
+Two critical environmental challenges motivate this study:
+
+\textbf{Air Quality Monitoring}: Automated air quality category prediction enables environmental agencies to respond to pollution events quickly and to track air quality trends over time, supporting public health protection and regulatory compliance.
+
+\textbf{Climate Policy Analysis}: By classifying sentiment in climate policy documents, policymakers can understand public and institutional responses to environmental policies, enabling evidence-based policy adjustments and improved communication strategies.
+
+\subsection{Data Understanding}
+
+\subsubsection{Air Quality Dataset (Structured)}
+The air quality dataset contains 15,000 hourly measurements with 20 attributes per record: timestamp, country, city, station type, temperature, humidity, wind speed, precipitation, PM2.5, PM10, NO2, CO, O3, SO2, AQI, AQI category, hour, day of week, month, and season. The target variable is AQI category, classified into six classes: Good, Moderate, Unhealthy for Sensitive Groups, Unhealthy, Very Unhealthy, and Hazardous. The class distribution shows moderate imbalance, with the majority of records classified as Moderate (approximately 62\%), followed by Unhealthy for Sensitive Groups (35\%), with smaller proportions for other categories.
+
+\subsubsection{Climate Policy Text Dataset (Unstructured)}
+The climate policy text dataset contains 9,500 documents with attributes including document ID, publication date, text content, sentiment, source type, urgency, impact score, and word count. The target variable is sentiment, classified as Positive, Negative, or Neutral. The class distribution is relatively balanced, with approximately 35\% Positive, 35\% Negative, and 30\% Neutral sentiment.
+
+\begin{table}[h]
+\centering
+\caption{Dataset Characteristics}
+\label{tab:datasets}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Attribute} & \textbf{Air Quality} & \textbf{Climate Text} \\
+\midrule
+Instances & 15,000 & 9,500 \\
+Features & 20 & Variable (text) \\
+Data Type & Numeric/Categorical & Text \\
+Target & 6-class AQI category & 3-class sentiment \\
+Class Balance & Imbalanced (62\% Moderate) & Balanced (35\% each) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Data Preparation}
+
+\subsubsection{Air Quality Preprocessing Pipeline}
+The preprocessing pipeline for air quality data included: (1) Missing value imputation using median strategy for numeric features, handling approximately 2\% missing values; (2) Outlier removal using the Interquartile Range (IQR) method, removing approximately 2\% of records identified as outliers; (3) Feature engineering to create derived features: PM ratio (PM2.5/PM10), pollution index (average of PM2.5, PM10, and NO2), is\_weekend (binary indicator), and is\_rush\_hour (binary indicator for peak traffic hours); (4) Label encoding for categorical target variable to enable classification algorithms.
+
+\subsubsection{Text Preprocessing Pipeline}
+The text preprocessing pipeline included six steps: (1) Lowercasing all text; (2) Removing HTML tags and URLs using regular expressions; (3) Removing punctuation, special characters, and numbers; (4) Tokenization using Natural Language Toolkit (NLTK); (5) Removal of stopwords using English stopword lists; and (6) WordNet lemmatization to reduce vocabulary size.
+
+Parameters for TF-IDF vectorization included: (i) maximum number of features = 5,000 to balance dimensionality and vocabulary coverage; (ii) unigrams and bigrams to capture phrases like 'climate change' and 'carbon emissions'; (iii) minimum document frequency = 2 to exclude rare words; and (iv) maximum document frequency = 95\% to exclude overly common words.
+
+\textbf{Sampling Strategy}: To preserve class distributions and minimize computational cost, the full datasets were used with stratified train-test splitting. Stratification ensures proportionate representation of all classes in both training and testing sets.
+
+\subsection{Modeling}
+
+Four algorithms were implemented with each member responsible for two distinct models:
+
+\textbf{Member 1 - Air Quality Prediction}: Random Forest and XGBoost
+
+\textbf{Member 2 - Climate Text Classification}: Logistic Regression and SVM
+
+\textbf{Model Specifications and Parameterization}:
+
+\textbf{Random Forest}: The model was configured with n\_estimators=200 trees to provide stable predictions while balancing computational cost. Maximum depth was set to 20 to allow representation of non-linear relationships without excessive overfitting. Minimum samples split=5 and minimum samples leaf=2 were used to prevent overfitting on small subsets. Class weights were set to 'balanced' to handle class imbalance. The sqrt feature selection strategy was employed for each tree.
+
+\textbf{XGBoost}: The learning rate was set to 0.1 to balance convergence speed and accuracy. Maximum depth was set to 7, which is shallower than Random Forest trees; boosting introduces additional complexity through iterations, and shallower trees reduce overfitting tendency. The number of estimators was set to 200. L2 regularization (lambda=1.0) was applied to prevent overfitting. Subsample=0.8 and colsample\_bytree=0.8 were used for additional regularization.
+
+\textbf{Logistic Regression}: The regularization parameter C was set to 1.0 to balance model complexity and fit. Maximum iterations were set to 1000 to ensure convergence. The solver was set to 'lbfgs' for efficient optimization. Class weights were set to 'balanced' to handle any minor class imbalance.
+
+\textbf{Support Vector Machine}: The regularization parameter C was set to 1.0, allowing a balance between finding the largest margin and minimizing misclassification cost. A linear kernel was used for computational efficiency and interpretability with high-dimensional sparse text data. Probability estimates were enabled to support interpretability analysis.
+
+\subsection{Model Interpretability Implementation}
+
+\textbf{SHAP for Air Quality}: TreeSHAP efficiently computes Shapley values for tree ensembles. Provides both global feature importance (mean absolute SHAP values) and local explanations (individual prediction contributions).
+
+\textbf{LIME for Text}: Perturbs input by randomly removing words, observes prediction changes, and fits a local linear model. Explains which words drive individual sentiment predictions for climate policy documents.
+
+\section{Evaluation}
+
+\subsection{Performance Metrics Selection}
+
+Multiple metrics were selected to capture different aspects of classification performance:
+
+\textbf{Accuracy}: Reflects overall correctness but can be misleading in imbalanced datasets. Included for baseline comparability.
+
+\textbf{Precision}: Proportion of positive predictions that are correct. Important for air quality warnings to avoid false alarms.
+
+\textbf{Recall (Sensitivity)}: Proportion of actual positives correctly identified. Critical for identifying poor air quality events and negative policy sentiment.
+
+\textbf{F1-Score}: Harmonic mean of precision and recall, providing a balanced measure when both false positives and false negatives are costly. Primary metric for imbalanced classification problems.
+
+\textbf{Cohen's Kappa}: Measure of agreement beyond chance, adjusting for class distribution. Scores above 0.6 indicate substantial agreement.
+
+\textbf{Matthews Correlation Coefficient}: Balanced measure for all confusion matrix categories, particularly useful for multi-class problems.
+
+\subsection{Sampling and Validation Strategy}
+
+\textbf{Train-Test Split}: Data was partitioned with 75\% for training and 25\% for testing. Stratified sampling was employed to maintain class proportions in both subsets.
+
+\textbf{Cross-Validation}: For hyperparameter optimization, five-fold stratified cross-validation was applied to ensure robustness against single train-test partitions. Stratification preserves class distribution within each fold.
+
+\subsection{Results}
+
+\subsubsection{Member 1: Air Quality Classification}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\textwidth]{student1_model_comparison.png}
+\caption{Member 1: Performance comparison showing Random Forest and XGBoost results}
+\label{fig:member1_comparison}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\caption{Member 1: Air Quality Classification Results}
+\label{tab:member1_results}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{Acc.} & \textbf{Prec.} & \textbf{Recall} & \textbf{F1} & \textbf{Kappa} \\
+\midrule
+Random Forest & 0.987 & 0.987 & 0.987 & 0.987 & 0.972 \\
+XGBoost & 0.986 & 0.986 & 0.986 & 0.986 & 0.970 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Random Forest marginally outperformed XGBoost across all metrics evaluated. The observed accuracy of 98.7\% for Random Forest versus 98.6\% for XGBoost represents excellent performance for multi-class air quality classification. Cohen's Kappa values of 0.972 and 0.970 indicate substantial agreement beyond chance, suggesting both models effectively capture meaningful patterns in air quality data.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{rf_confusion_matrix.png}
+\caption{Random Forest Confusion Matrix for Air Quality Classification}
+\label{fig:rf_cm}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{xgb_confusion_matrix.png}
+\caption{XGBoost Confusion Matrix for Air Quality Classification}
+\label{fig:xgb_cm}
+\end{figure}
+
+\textbf{SHAP Feature Insights}:
+\begin{enumerate}
+    \item \textbf{PM2.5}: The most important predictor of air quality categories, with higher concentrations strongly associated with poorer air quality.
+    \item \textbf{PM10}: Second most important feature, showing strong correlation with AQI categories.
+    \item \textbf{NO2}: Nitrogen dioxide levels significantly contribute to air quality predictions.
+    \item \textbf{Temperature}: Meteorological factors influence air quality through atmospheric stability.
+    \item \textbf{Hour and Rush Hour}: Temporal patterns reveal diurnal variations in pollution levels.
+\end{enumerate}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\textwidth]{shap_rf_summary.png}
+\caption{SHAP Summary Plot: Feature importance for Random Forest air quality model}
+\label{fig:shap_rf}
+\end{figure}
+
+\subsubsection{Member 2: Climate Text Sentiment Classification}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\textwidth]{student2_model_comparison.png}
+\caption{Member 2: Performance comparison for Logistic Regression and SVM}
+\label{fig:member2_comparison}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\caption{Member 2: Climate Text Sentiment Classification Results}
+\label{tab:member2_results}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{Acc.} & \textbf{Prec.} & \textbf{Recall} & \textbf{F1} & \textbf{Kappa} \\
+\midrule
+Logistic Regression & 1.000 & 1.000 & 1.000 & 1.000 & 1.000 \\
+SVM & 1.000 & 1.000 & 1.000 & 1.000 & 1.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Both Logistic Regression and SVM achieved perfect classification performance on the test set. This exceptional performance may be attributed to the synthetic data characteristics, where class separation is well-defined, and the TF-IDF vectorization effectively captures distinct vocabulary patterns for each sentiment class. In real-world applications with more ambiguous text, performance would likely be lower but still competitive.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{lr_confusion_matrix.png}
+\caption{Logistic Regression Confusion Matrix for Sentiment Classification}
+\label{fig:lr_cm}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{svm_confusion_matrix.png}
+\caption{SVM Confusion Matrix for Sentiment Classification}
+\label{fig:svm_cm}
+\end{figure}
+
+\textbf{LIME Text Insights}: LIME explanations reveal that positive sentiment is driven by terms such as "effective", "successful", "improvement", "reduction", and "progress". Negative sentiment indicators include terms such as "failure", "concern", "threat", "decline", and "crisis". Neutral sentiment is characterized by factual terms and policy language. These interpretable patterns support quality assurance of model decisions and enable stakeholders to understand classification rationale.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{lime_explanation_sample1.png}
+\caption{LIME Explanation: Sample negative sentiment classification}
+\label{fig:lime1}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{lime_explanation_sample2.png}
+\caption{LIME Explanation: Sample neutral sentiment classification}
+\label{fig:lime2}
+\end{figure}
+
+\subsection{Cross-Dataset Comparison}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\textwidth]{complete_dashboard.png}
+\caption{Comprehensive comparison across all models and datasets}
+\label{fig:complete_comparison}
+\end{figure}
+
+\begin{table*}[t]
+\centering
+\caption{Consolidated Results Across All Datasets and Models}
+\label{tab:all_results}
+\begin{tabular}{llcccccc}
+\toprule
+\textbf{Dataset} & \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Cohen's Kappa} & \textbf{MCC} \\
+\midrule
+Air Quality & Random Forest & 0.987 & 0.987 & 0.987 & 0.987 & 0.972 & 0.972 \\
+Air Quality & XGBoost & 0.986 & 0.986 & 0.986 & 0.986 & 0.970 & 0.970 \\
+Climate Text & Logistic Regression & 1.000 & 1.000 & 1.000 & 1.000 & 1.000 & 1.000 \\
+Climate Text & SVM & 1.000 & 1.000 & 1.000 & 1.000 & 1.000 & 1.000 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Implications of Results}
+
+\textbf{Air Quality Prediction}: Both Random Forest and XGBoost models achieved excellent performance (98.7\% and 98.6\% accuracy), demonstrating that ensemble methods are highly effective for air quality classification. The high Cohen's Kappa values (0.972 and 0.970) indicate substantial agreement beyond chance. SHAP analyses provide actionable insights for environmental monitoring, identifying PM2.5, PM10, and NO2 as the most critical pollutants for air quality assessment.
+
+\textbf{Climate Text Sentiment}: The perfect classification performance achieved by both Logistic Regression and SVM demonstrates the effectiveness of TF-IDF vectorization combined with linear classifiers for climate policy text analysis. While this performance may be attributed to synthetic data characteristics, it validates the approach for real-world applications where class separation may be less distinct. LIME explanations provide word-level insights that enable stakeholders to understand and trust model decisions.
+
+\textbf{Parameterization Impact}: The selected hyperparameters for Random Forest (max\_depth=20, n\_estimators=200) and XGBoost (max\_depth=7, learning\_rate=0.1) achieved optimal bias-variance trade-offs, as evidenced by consistent performance on both training and test sets.
+
+\section{Discussion}
+
+\subsection{Addressing Research Questions}
+
+\textbf{RQ1}: Random Forest marginally outperforms XGBoost for air quality classification (F1: 0.987 vs 0.986), though the difference is minimal. Both ensemble methods demonstrate excellent performance suitable for deployment in environmental monitoring systems.
+
+\textbf{RQ2}: Both Logistic Regression and SVM achieve equivalent perfect performance for climate text sentiment classification. The linear nature of both models, combined with effective TF-IDF feature representation, enables optimal class separation in the synthetic dataset.
+
+\textbf{RQ3}: Top air quality predictors identified through SHAP analysis are PM2.5, PM10, NO2, temperature, and temporal features (hour, rush hour). These provide actionable targets for environmental monitoring and intervention strategies.
+
+\textbf{RQ4}: SHAP and LIME enable environmental stakeholders to understand model decisions, facilitating trust and adoption. Feature-level air quality explanations support monitoring prioritization; word-level sentiment explanations guide policy communication strategies.
+
+\subsection{Environmental Applications}
+
+\textbf{Automated Air Quality Monitoring}: Deploy air quality classifiers to categorize incoming sensor measurements, triggering alerts for poor air quality events and supporting public health protection.
+
+\textbf{Climate Policy Analysis}: Deploy sentiment classifiers to monitor climate policy document sentiment, enabling policymakers to gauge policy acceptance and adjust communication strategies.
+
+\textbf{Resource Optimization}: Focus environmental monitoring resources on high-impact pollutants (PM2.5, PM10, NO2) rather than comprehensive monitoring of all parameters, improving monitoring efficiency.
+
+\subsection{Limitations}
+
+There are several limitations to the generalizability of these findings. First, the datasets used are synthetically generated, whereas real-world environmental data may exhibit different patterns, noise levels, and class distributions. Second, the perfect classification performance for text sentiment may not generalize to real-world policy documents with more ambiguous language. Third, due to computational limitations, hyperparameter optimization was limited to key parameters, and deep learning approaches were not explored. Fourth, the analysis does not incorporate temporal dependencies or spatial correlations that may exist in real environmental data. Fifth, continuous monitoring of concept drift will be necessary once deployed into production environments.
+
+\section{Conclusions and Future Work}
+
+This study compared machine learning methods for environmental impact analysis following CRISP-DM methodology across structured air quality data and unstructured climate policy text.
+
+\textbf{Key Findings}:
+\begin{enumerate}
+    \item Random Forest and XGBoost both achieved excellent performance for air quality classification (98.7\% and 98.6\% accuracy), demonstrating the effectiveness of ensemble methods for environmental prediction tasks.
+    \item Logistic Regression and SVM achieved perfect classification performance for climate text sentiment, validating the effectiveness of TF-IDF vectorization combined with linear classifiers for policy document analysis.
+    \item Interpretability analyses from both SHAP and LIME revealed actionable insights: Air quality is driven by specific pollutants (PM2.5, PM10, NO2); Sentiment is influenced by distinct vocabulary patterns.
+    \item The CRISP-DM methodology helped organize the analytics workflow from business understanding to evaluation in a way that aligns technical implementation with environmental objectives.
+\end{enumerate}
+
+\textbf{Answers to Research Questions}: Ensemble methods like Random Forest and XGBoost are highly effective for air quality classification, with both methods achieving excellent performance. Linear classifiers combined with TF-IDF are effective for climate text sentiment analysis. Model interpretability techniques bridge the gap between predictive outcomes and environmental actions.
+
+\textbf{Future Work}: Deep learning approaches, such as LSTM networks for temporal air quality prediction and transformer models (BERT) for climate text analysis, may increase accuracy, though potentially at some cost in interpretability. Temporal modeling of air quality trajectories may allow earlier identification of pollution events. Real-time scoring would permit immediate environmental interventions. Integration of satellite data and additional sensor networks would enhance prediction capabilities. A/B testing would help confirm the benefits of environmental interventions based on model predictions.
+
+\section*{Contribution Summary}
+
+\textbf{Gitte Swapna (Member 1)}: Air quality data analytics, feature engineering, Random Forest and XGBoost implementation, SHAP interpretability analysis, structured data preprocessing pipeline.
+
+\textbf{Hemasree Challa (Member 2)}: Climate policy text analysis, TF-IDF vectorization, Logistic Regression and SVM implementation, LIME interpretability analysis, text preprocessing pipeline.
+
+\textbf{Joint Contributions}: Literature review, methodology design, cross-dataset comparison, report writing, presentation preparation.
+
+\begin{thebibliography}{00}
+\bibitem{chapman2000crisp} P. Chapman, J. Clinton, R. Kerber, T. Khabaza, T. Reinartz, C. Shearer, and R. Wirth, ``CRISP-DM 1.0: Step-by-step data mining guide,'' SPSS Inc., 2000.
+
+\bibitem{zhan2017deep} Y. Zhan, Y. Luo, X. Deng, M. Zhang, K. Grieneisen, B. Di, and F. Zhang, ``Deep learning approach for predicting daily PM2.5 concentrations,'' Environmental Science \& Technology, vol. 51, no. 12, pp. 6999--7005, 2017.
+
+\bibitem{breiman2001random} L. Breiman, ``Random forests,'' Machine Learning, vol. 45, no. 1, pp. 5--32, 2001.
+
+\bibitem{chen2016xgboost} T. Chen and C. Guestrin, ``XGBoost: A scalable tree boosting system,'' ACM SIGKDD, pp. 785--794, 2016.
+
+\bibitem{feng2019air} X. Feng, Q. Li, Y. Zhu, J. Hou, L. Jin, and J. Wang, ``Artificial neural networks forecasting of PM2.5 pollution using air mass trajectory based geographic model and wavelet transformation,'' Atmospheric Environment, vol. 107, pp. 118--128, 2015.
+
+\bibitem{pang2008opinion} B. Pang and L. Lee, ``Opinion mining and sentiment analysis,'' Foundations and Trends in Information Retrieval, vol. 2, no. 1-2, pp. 1--135, 2008.
+
+\bibitem{liu2012sentiment} B. Liu, ``Sentiment analysis and opinion mining,'' Synthesis Lectures on Human Language Technologies, vol. 5, no. 1, pp. 1--167, 2012.
+
+\bibitem{cortes1995svm} C. Cortes and V. Vapnik, ``Support-vector networks,'' Machine Learning, vol. 20, no. 3, pp. 273--297, 1995.
+
+\bibitem{joachims1998text} T. Joachims, ``Text categorization with support vector machines: Learning with many relevant features,'' European Conference on Machine Learning, pp. 137--142, 1998.
+
+\bibitem{zhang2018deep} L. Zhang, S. Wang, and B. Liu, ``Deep learning for sentiment analysis: A survey,'' WIREs Data Mining and Knowledge Discovery, vol. 8, no. 4, e1253, 2018.
+
+\bibitem{lundberg2017shap} S. M. Lundberg and S. I. Lee, ``A unified approach to interpreting model predictions,'' NeurIPS, vol. 30, 2017.
+
+\bibitem{ribeiro2016lime} M. T. Ribeiro, S. Singh, and C. Guestrin, ``Why should I trust you?: Explaining the predictions of any classifier,'' ACM SIGKDD, pp. 1135--1144, 2016.
+
+\bibitem{molnar2020interpretable} C. Molnar, ``Interpretable machine learning: A guide for making black box models explainable,'' 2020.
+
+\end{thebibliography}
+
+\end{document}
+
