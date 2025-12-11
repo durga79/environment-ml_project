@@ -43,14 +43,27 @@ environmental_ml_project/
 
 ## Quick Setup & Run
 
-### Prerequisites
-- Python 3.8 or higher
-- Jupyter Notebook or JupyterLab
+### Option 1: Google Colab (Recommended for Presentation)
 
-### Installation
+**Perfect for the live demo!** No installation needed.
+
+1. Upload the project folder to Google Drive
+2. Open `COMPLETE_ANALYSIS_ALL_STUDENTS.ipynb` in Colab
+3. Run Cell 1 (installs all packages automatically)
+4. Run all cells (Runtime → Run all)
+
+**📖 See `GOOGLE_COLAB_GUIDE.md` for detailed instructions**
+
+**Estimated Runtime**: 20-25 minutes
+
+---
+
+### Option 2: Local Installation
+
+**Prerequisites**: Python 3.8+, Jupyter Notebook
 
 ```bash
-# 1. Clone or navigate to project directory
+# 1. Navigate to project directory
 cd environmental_ml_project
 
 # 2. Create virtual environment (recommended)
@@ -60,21 +73,17 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Download NLTK data (required for text analysis)
+# 4. Download NLTK data
 python3 -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
-```
 
-### Run the Project
-
-```bash
-# Start Jupyter Notebook
+# 5. Start Jupyter
 jupyter notebook
 
-# Open: notebooks/COMPLETE_ANALYSIS_ALL_STUDENTS.ipynb
-# Click: "Kernel" → "Restart & Run All"
+# 6. Open: notebooks/COMPLETE_ANALYSIS_ALL_STUDENTS.ipynb
+# 7. Click: "Kernel" → "Restart & Run All"
 ```
 
-**Estimated Runtime**: 15-20 minutes (depending on hardware)
+**Estimated Runtime**: 15-20 minutes
 
 ## What's Included
 
