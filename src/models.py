@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, GradientBoostingClassifier, GradientBoostingRegressor
 from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.svm import SVC, SVR
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -30,6 +30,8 @@ class MLModelTrainer:
                     'xgboost': xgb.XGBClassifier(random_state=42, n_jobs=-1, eval_metric='logloss'),
                     'logistic_regression': LogisticRegression(random_state=42, max_iter=1000, n_jobs=-1),
                     'svm': SVC(random_state=42, probability=True),
+                    'decision_tree': DecisionTreeClassifier(random_state=42),
+                    'gradient_boosting': GradientBoostingClassifier(random_state=42),
                     'knn': KNeighborsClassifier(n_jobs=-1)
                 }
             else:
@@ -38,6 +40,8 @@ class MLModelTrainer:
                     'xgboost': xgb.XGBRegressor(random_state=42, n_jobs=-1),
                     'linear_regression': LinearRegression(n_jobs=-1),
                     'svr': SVR(),
+                    'decision_tree': DecisionTreeRegressor(random_state=42),
+                    'gradient_boosting': GradientBoostingRegressor(random_state=42),
                     'knn': KNeighborsRegressor(n_jobs=-1)
                 }
         else:
@@ -275,6 +279,21 @@ def get_default_param_grids(model_name: str) -> Dict[str, list]:
             'learning_rate': [0.01, 0.05, 0.1, 0.2],
             'subsample': [0.7, 0.8, 0.9, 1.0],
             'colsample_bytree': [0.7, 0.8, 0.9, 1.0]
+        },
+        'decision_tree': {
+            'max_depth': [5, 10, 15, 20, 25, None],
+            'min_samples_split': [2, 5, 10, 20],
+            'min_samples_leaf': [1, 2, 4, 8],
+            'criterion': ['gini', 'entropy'],
+            'max_features': ['sqrt', 'log2', None]
+        },
+        'gradient_boosting': {
+            'n_estimators': [100, 150, 200],
+            'learning_rate': [0.01, 0.05, 0.1, 0.15],
+            'max_depth': [3, 5, 7, 9],
+            'min_samples_split': [2, 5, 10],
+            'min_samples_leaf': [1, 2, 4],
+            'subsample': [0.7, 0.8, 0.9, 1.0]
         },
         'logistic_regression': {
             'C': [0.001, 0.01, 0.1, 1, 10, 100],

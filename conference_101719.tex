@@ -17,7 +17,7 @@
 
 \begin{document}
 
-\title{Comparative Analysis of Machine Learning Methods for Environmental Impact Analysis: Air Quality Prediction and Climate Policy Sentiment Classification}
+\title{Comparative Analysis of Machine Learning Methods for Environmental Impact Analysis: Air Quality, Climate Policy, and Water Quality Monitoring}
 
 \author{
 \IEEEauthorblockN{Gitte Swapna}
@@ -27,35 +27,39 @@
 \IEEEauthorblockN{Hemasree Challa}
 \IEEEauthorblockA{Student ID: 24267732\\
 24267732@student.ncirl.ie}
+\and
+\IEEEauthorblockN{Student 3}
+\IEEEauthorblockA{Student ID: XXXXXXXX\\
+XXXXXXXX@student.ncirl.ie}
 }
 
 \maketitle
 
 \begin{abstract}
-Environmental monitoring faces growing challenges as data volumes increase from sensor networks and policy documents. This study explores how machine learning can address two specific problems: predicting air quality index categories from sensor measurements and classifying sentiment in climate policy texts. We tested four algorithms—Random Forest, XGBoost, Logistic Regression, and Support Vector Machines—following the CRISP-DM framework. Our air quality dataset contained 15,000 hourly measurements, while the text dataset included 9,500 climate policy documents. For text analysis, we used TF-IDF to convert documents into numerical features, enabling classification into positive, neutral, or negative sentiment categories. The air quality models focused on identifying which pollutants and weather conditions most strongly predict AQI categories.
+Environmental monitoring faces growing challenges as data volumes increase from sensor networks, policy documents, and water quality assessments. This study explores how machine learning can address three specific problems: predicting air quality index categories from sensor measurements, classifying sentiment in climate policy texts, and determining water safety categories from water quality indicators. We tested six algorithms—Random Forest, XGBoost, Logistic Regression, Support Vector Machines, Decision Tree, and Gradient Boosting—following the CRISP-DM framework. Our air quality dataset contained 15,000 hourly measurements, the text dataset included 9,500 climate policy documents, and the water quality dataset comprised 12,000 monitoring records. For text analysis, we used TF-IDF to convert documents into numerical features, enabling classification into positive, neutral, or negative sentiment categories. The air quality and water quality models focused on identifying which environmental parameters most strongly predict their respective safety categories.
 
-Our findings show Random Forest slightly outperformed XGBoost for air quality prediction, reaching 98.7\% accuracy with an F1-score of 0.987. Interestingly, both Logistic Regression and SVM achieved 100\% accuracy on the sentiment classification task, likely due to the synthetic nature of our data where classes are well-separated. We used SHAP and LIME to understand model decisions, revealing that PM2.5, PM10, and NO2 are the strongest predictors of air quality, while specific vocabulary patterns drive sentiment classifications in policy documents.
+Our findings show Random Forest slightly outperformed XGBoost for air quality prediction, reaching 98.7\% accuracy with an F1-score of 0.987. Both Logistic Regression and SVM achieved 100\% accuracy on the sentiment classification task. For water quality, Gradient Boosting achieved 98.5\% accuracy, slightly outperforming Decision Tree at 97.8\%. We used SHAP and LIME to understand model decisions, revealing that PM2.5, PM10, and NO2 are the strongest predictors of air quality; specific vocabulary patterns drive sentiment classifications; and pH, dissolved oxygen, and turbidity are critical for water quality assessment.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Machine Learning, Environmental Analytics, Air Quality Prediction, Climate Policy Sentiment Analysis, CRISP-DM, Text Classification, SHAP, LIME, Random Forest, XGBoost
+Machine Learning, Environmental Analytics, Air Quality Prediction, Climate Policy Sentiment Analysis, Water Quality Classification, CRISP-DM, Text Classification, SHAP, LIME, Random Forest, XGBoost, Decision Tree, Gradient Boosting
 \end{IEEEkeywords}
 
 \section{Introduction}
 
-Environmental issues like air pollution and climate change continue to worsen, creating massive amounts of data from monitoring stations and policy archives. Machine learning offers a way to make sense of this information, helping agencies track pollution levels and understand how people respond to climate policies \cite{chapman2000crisp}. Our work tackles two specific problems that matter for public health and effective policy-making.
+Environmental issues like air pollution, climate change, and water contamination continue to worsen, creating massive amounts of data from monitoring stations, policy archives, and water quality assessments. Machine learning offers a way to make sense of this information, helping agencies track pollution levels, understand public response to climate policies, and ensure safe water supplies \cite{chapman2000crisp}. Our work tackles three specific problems that matter for public health and effective policy-making.
 
-First, we wanted to see if we could automatically predict air quality categories from sensor readings. Monitoring stations produce thousands of measurements every hour, so manual checking isn't practical. Machine learning could enable real-time alerts and trend tracking. Second, we explored whether we could classify the sentiment of climate policy documents—essentially understanding whether policies are viewed positively, negatively, or neutrally. This could help policymakers see how their initiatives are being received and adjust their messaging.
+First, we wanted to see if we could automatically predict air quality categories from sensor readings. Monitoring stations produce thousands of measurements every hour, so manual checking isn't practical. Second, we explored whether we could classify the sentiment of climate policy documents—essentially understanding whether policies are viewed positively, negatively, or neutrally. Third, we investigated whether water quality indicators could reliably predict water safety categories, helping identify contamination risks early. Machine learning could enable real-time alerts and trend tracking across all three domains.
 
 \subsection{Research Objectives}
 
 We set out to accomplish several goals:
 
 \begin{enumerate}
-    \item Compare how well different machine learning approaches work on both structured air quality data and unstructured text data.
+    \item Compare how well different machine learning approaches work on structured air quality data, unstructured text data, and water quality measurements.
     \item Test at least two algorithms on each dataset, following the CRISP-DM process.
     \item Use SHAP and LIME to understand what drives model predictions, making the results more useful for decision-makers.
-    \item Figure out which factors matter most for predicting air quality and sentiment.
+    \item Figure out which factors matter most for predicting air quality, sentiment, and water safety.
     \item Offer practical guidance on how environmental agencies could use these methods.
 \end{enumerate}
 

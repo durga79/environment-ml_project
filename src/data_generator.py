@@ -262,8 +262,182 @@ class ClimateTextDataGenerator:
         return df
 
 
+class WaterQualityDataGenerator:
+    
+    def __init__(self, n_samples: int = 12000, random_state: int = 42):
+        self.n_samples = n_samples
+        np.random.seed(random_state)
+        random.seed(random_state)
+    
+    def generate_dataset(self) -> pd.DataFrame:
+        start_date = datetime(2020, 1, 1)
+        dates = [start_date + timedelta(days=i // 3) for i in range(self.n_samples)]
+        
+        countries = ['Germany', 'France', 'Italy', 'Spain', 'Poland', 'Netherlands', 
+                    'Belgium', 'Austria', 'Sweden', 'Portugal']
+        
+        water_bodies = {
+            'Germany': ['Rhine River', 'Danube River', 'Elbe River', 'Lake Constance'],
+            'France': ['Seine River', 'Loire River', 'Rhone River', 'Lake Geneva'],
+            'Italy': ['Po River', 'Tiber River', 'Arno River', 'Lake Como'],
+            'Spain': ['Ebro River', 'Tagus River', 'Guadalquivir River', 'Lake Sanabria'],
+            'Poland': ['Vistula River', 'Oder River', 'Lake Sniardwy', 'Warta River'],
+            'Netherlands': ['Rhine River', 'Meuse River', 'IJsselmeer Lake', 'Scheldt River'],
+            'Belgium': ['Scheldt River', 'Meuse River', 'Yser River', 'Lake Gileppe'],
+            'Austria': ['Danube River', 'Inn River', 'Lake Neusiedl', 'Mur River'],
+            'Sweden': ['Lake Vanern', 'Lake Vattern', 'Gota River', 'Dalalven River'],
+            'Portugal': ['Tagus River', 'Douro River', 'Guadiana River', 'Mondego River']
+        }
+        
+        source_types = ['River', 'Lake', 'Reservoir', 'Stream', 'Groundwater']
+        monitoring_stations = ['Upstream', 'Midstream', 'Downstream', 'Source', 'Urban_Point']
+        
+        data = []
+        
+        for i, date in enumerate(dates):
+            country = np.random.choice(countries)
+            water_body = np.random.choice(water_bodies[country])
+            source_type = np.random.choice(source_types)
+            station = np.random.choice(monitoring_stations)
+            
+            month = date.month
+            season = (month % 12 + 3) // 3
+            
+            temperature = 10 + 8 * np.sin(2 * np.pi * month / 12) + np.random.normal(0, 2)
+            temperature = np.clip(temperature, 0, 30)
+            
+            urban_factor = 1.0
+            if station in ['Downstream', 'Urban_Point']:
+                urban_factor = 1.4
+            elif station == 'Midstream':
+                urban_factor = 1.2
+            
+            seasonal_factor = 1.0
+            if season in [2, 3]:
+                seasonal_factor = 1.1
+            
+            ph_base = 7.0 + np.random.normal(0, 0.5)
+            ph = ph_base + (0.3 if source_type == 'Lake' else 0) - (0.4 * urban_factor if urban_factor > 1.2 else 0)
+            ph = np.clip(ph, 4.5, 9.5)
+            
+            turbidity_base = 5 + 15 * urban_factor * seasonal_factor
+            turbidity = turbidity_base + np.random.normal(0, 3)
+            turbidity = np.clip(turbidity, 0.1, 100)
+            
+            dissolved_oxygen_base = 9 - 0.15 * temperature
+            dissolved_oxygen = dissolved_oxygen_base - (2 * urban_factor if urban_factor > 1.2 else 0) + np.random.normal(0, 0.5)
+            dissolved_oxygen = np.clip(dissolved_oxygen, 2, 14)
+            
+            conductivity_base = 300 + 200 * urban_factor
+            conductivity = conductivity_base + np.random.normal(0, 50)
+            conductivity = np.clip(conductivity, 100, 1500)
+            
+            nitrate_base = 2 + 5 * urban_factor * seasonal_factor
+            nitrate = nitrate_base + np.random.normal(0, 1)
+            nitrate = np.clip(nitrate, 0, 50)
+            
+            phosphate_base = 0.05 + 0.15 * urban_factor * seasonal_factor
+            phosphate = phosphate_base + np.random.normal(0, 0.03)
+            phosphate = np.clip(phosphate, 0, 2)
+            
+            ammonia_base = 0.1 + 0.5 * urban_factor
+            ammonia = ammonia_base + np.random.normal(0, 0.1)
+            ammonia = np.clip(ammonia, 0, 5)
+            
+            bod_base = 2 + 3 * urban_factor
+            bod = bod_base + np.random.normal(0, 0.5)
+            bod = np.clip(bod, 0.5, 30)
+            
+            cod_base = bod * 2.5
+            cod = cod_base + np.random.normal(0, 2)
+            cod = np.clip(cod, 1, 100)
+            
+            chloride_base = 20 + 30 * urban_factor
+            chloride = chloride_base + np.random.normal(0, 10)
+            chloride = np.clip(chloride, 5, 250)
+            
+            total_solids_base = 200 + 150 * urban_factor
+            total_solids = total_solids_base + np.random.normal(0, 30)
+            total_solids = np.clip(total_solids, 50, 1000)
+            
+            coliform_base = 50 * urban_factor * seasonal_factor
+            coliform = coliform_base * np.random.lognormal(0, 0.5)
+            coliform = np.clip(coliform, 0, 5000)
+            
+            wqi = self._calculate_wqi(ph, dissolved_oxygen, bod, nitrate, phosphate, 
+                                     turbidity, total_solids, coliform)
+            
+            safety_category = self._get_safety_category(wqi, dissolved_oxygen, bod, coliform, ph)
+            
+            data.append({
+                'timestamp': date,
+                'country': country,
+                'water_body': water_body,
+                'source_type': source_type,
+                'monitoring_station': station,
+                'temperature': round(temperature, 2),
+                'ph': round(ph, 2),
+                'dissolved_oxygen': round(dissolved_oxygen, 2),
+                'turbidity': round(turbidity, 2),
+                'conductivity': round(conductivity, 2),
+                'nitrate': round(nitrate, 2),
+                'phosphate': round(phosphate, 3),
+                'ammonia': round(ammonia, 3),
+                'bod': round(bod, 2),
+                'cod': round(cod, 2),
+                'chloride': round(chloride, 2),
+                'total_solids': round(total_solids, 2),
+                'coliform_count': round(coliform, 2),
+                'wqi': round(wqi, 2),
+                'safety_category': safety_category,
+                'month': month,
+                'season': season
+            })
+        
+        df = pd.DataFrame(data)
+        
+        missing_mask = np.random.random(df.shape) < 0.015
+        df = df.mask(missing_mask)
+        
+        return df
+    
+    def _calculate_wqi(self, ph, do, bod, nitrate, phosphate, turbidity, 
+                       total_solids, coliform):
+        ph_score = 100 if 6.5 <= ph <= 8.5 else max(0, 100 - abs(ph - 7) * 20)
+        
+        do_score = min(100, (do / 8.0) * 100) if do >= 6 else (do / 6.0) * 80
+        
+        bod_score = 100 if bod <= 3 else max(0, 100 - (bod - 3) * 10)
+        
+        nitrate_score = 100 if nitrate <= 10 else max(0, 100 - (nitrate - 10) * 5)
+        
+        phosphate_score = 100 if phosphate <= 0.1 else max(0, 100 - (phosphate - 0.1) * 100)
+        
+        turbidity_score = 100 if turbidity <= 5 else max(0, 100 - (turbidity - 5) * 2)
+        
+        solids_score = 100 if total_solids <= 500 else max(0, 100 - (total_solids - 500) * 0.1)
+        
+        coliform_score = 100 if coliform <= 50 else max(0, 100 - np.log10(coliform / 50) * 30)
+        
+        wqi = (ph_score * 0.15 + do_score * 0.20 + bod_score * 0.15 + 
+               nitrate_score * 0.10 + phosphate_score * 0.10 + 
+               turbidity_score * 0.10 + solids_score * 0.10 + 
+               coliform_score * 0.10)
+        
+        return max(0, min(100, wqi))
+    
+    def _get_safety_category(self, wqi, do, bod, coliform, ph):
+        if wqi >= 70 and do >= 6 and bod <= 3 and coliform <= 100 and 6.5 <= ph <= 8.5:
+            return 'Safe'
+        elif wqi >= 50 and do >= 4 and bod <= 6 and coliform <= 1000:
+            return 'Moderate_Risk'
+        else:
+            return 'Contaminated'
+
+
 def create_integrated_dataset(air_quality_df: pd.DataFrame, 
-                              text_df: pd.DataFrame) -> pd.DataFrame:
+                              text_df: pd.DataFrame,
+                              water_quality_df: pd.DataFrame = None) -> pd.DataFrame:
     air_quality_daily = air_quality_df.copy()
     air_quality_daily['date'] = pd.to_datetime(air_quality_daily['timestamp']).dt.date
     
@@ -280,6 +454,17 @@ def create_integrated_dataset(air_quality_df: pd.DataFrame,
     
     sentiment_counts = text_daily.groupby(['date', 'sentiment']).size().unstack(fill_value=0)
     sentiment_counts = sentiment_counts.reset_index()
+    
+    if water_quality_df is not None:
+        water_daily = water_quality_df.copy()
+        water_daily['date'] = pd.to_datetime(water_daily['timestamp']).dt.date
+        
+        water_agg = water_daily.groupby(['date', 'country']).agg({
+            'wqi': 'mean',
+            'dissolved_oxygen': 'mean',
+            'bod': 'mean',
+            'safety_category': lambda x: x.mode()[0] if not x.mode().empty else 'Moderate_Risk'
+        }).reset_index()
     
     integrated = []
     
@@ -301,7 +486,7 @@ def create_integrated_dataset(air_quality_df: pd.DataFrame,
             
             avg_impact = matching_texts['impact_score'].mean()
             
-            integrated.append({
+            entry = {
                 'date': date,
                 'country': country,
                 'avg_pm25': round(row['pm2.5'], 2),
@@ -312,7 +497,20 @@ def create_integrated_dataset(air_quality_df: pd.DataFrame,
                 'sentiment_score': round(sentiment_score, 3),
                 'avg_impact_score': round(avg_impact, 2),
                 'num_documents': len(matching_texts)
-            })
+            }
+            
+            if water_quality_df is not None:
+                matching_water = water_agg[
+                    (water_agg['date'] == date) & 
+                    (water_agg['country'] == country)
+                ]
+                if len(matching_water) > 0:
+                    entry['avg_wqi'] = round(matching_water.iloc[0]['wqi'], 2)
+                    entry['avg_dissolved_oxygen'] = round(matching_water.iloc[0]['dissolved_oxygen'], 2)
+                    entry['avg_bod'] = round(matching_water.iloc[0]['bod'], 2)
+                    entry['water_safety_category'] = matching_water.iloc[0]['safety_category']
+            
+            integrated.append(entry)
     
     integrated_df = pd.DataFrame(integrated)
     

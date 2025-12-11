@@ -2,143 +2,190 @@
 
 ## Project Overview
 
-This project applies machine learning methods to analyze environmental sustainability through two interconnected datasets:
-1. **Air Quality Data** (Student 1): Numeric/categorical data for pollution prediction
-2. **Climate Policy Text Data** (Student 2): Text analysis for policy impact classification
-3. **Integrated Dataset**: Multi-modal analysis combining both sources
+This project applies machine learning methods to analyze environmental sustainability through three interconnected datasets for a 3-student team project.
 
-## Research Questions
+### Team Structure
+- **Student 1**: Air Quality Analysis (Random Forest, XGBoost)
+- **Student 2**: Climate Text Sentiment (Logistic Regression, SVM)
+- **Student 3**: Water Quality Safety (Decision Tree, Gradient Boosting)
+
+### Research Questions
 
 1. Can we accurately predict air quality index categories using environmental sensor data?
-2. How effectively can NLP methods classify climate policy documents by impact sentiment?
-3. What relationships exist between air quality trends and environmental policy discourse?
+2. How effectively can NLP methods classify climate policy sentiment from text?
+3. Can machine learning classify water safety categories from water quality measurements?
+4. What relationships exist between air quality, water quality, and environmental policy discourse?
 
 ## Project Structure
 
 ```
 environmental_ml_project/
-├── datasets/                          # All datasets used
+├── notebooks/
+│   └── COMPLETE_ANALYSIS_ALL_STUDENTS.ipynb  # Single comprehensive notebook
+├── src/                                       # Python modules
+│   ├── data_generator.py                      # Generate datasets
+│   ├── data_preprocessing.py                  # Data cleaning
+│   ├── models.py                              # ML model training
+│   ├── evaluation.py                          # Performance metrics
+│   └── interpretability.py                    # SHAP & LIME
+├── datasets/                                  # Generated during runtime
 │   ├── air_quality_data.csv
-│   ├── climate_news_text.csv
-│   └── integrated_multimodal.csv
-├── notebooks/                         # Jupyter notebooks for analysis
-│   ├── 01_data_collection_preprocessing.ipynb
-│   ├── 02_student1_air_quality_analysis.ipynb
-│   ├── 03_student2_text_analysis.ipynb
-│   ├── 04_integrated_analysis.ipynb
-│   └── 05_visualizations_presentation.ipynb
-├── src/                              # Python modules
-│   ├── data_preprocessing.py
-│   ├── models.py
-│   ├── evaluation.py
-│   └── interpretability.py
-├── results/                          # Output files
-│   ├── figures/
-│   └── metrics/
-├── requirements.txt
-└── README.md
+│   ├── climate_text_data.csv
+│   └── water_quality_data.csv
+├── results/                                   # Generated during runtime
+│   ├── figures/                               # Visualizations
+│   └── metrics/                               # Performance metrics
+├── requirements.txt                           # Python dependencies
+├── conference_101719.tex                      # LaTeX report template
+├── README.md                                  # This file
+└── QUICK_START.md                             # Quick setup guide
 ```
 
-## Setup Instructions
+## Quick Setup & Run
 
-### Option 1: Google Colab (Recommended for Presentation)
+### Prerequisites
+- Python 3.8 or higher
+- Jupyter Notebook or JupyterLab
 
-1. Upload the entire project folder to Google Drive
-2. Open Google Colab
-3. Mount your Google Drive:
-```python
-from google.colab import drive
-drive.mount('/content/drive')
-```
-4. Navigate to the project directory:
-```python
-%cd /content/drive/MyDrive/environmental_ml_project
-```
-5. Install requirements:
-```python
-!pip install -r requirements.txt
-```
-6. Run notebooks in order (01 through 05)
-
-### Option 2: Local Setup
+### Installation
 
 ```bash
-# Clone or download the project
+# 1. Clone or navigate to project directory
 cd environmental_ml_project
 
-# Create virtual environment (optional but recommended)
-python -m venv venv
+# 2. Create virtual environment (recommended)
+python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install dependencies
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# Launch Jupyter
-jupyter notebook
+# 4. Download NLTK data (required for text analysis)
+python3 -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
 ```
 
-## Methodology
+### Run the Project
 
-This project follows the **CRISP-DM** (Cross-Industry Standard Process for Data Mining) methodology:
+```bash
+# Start Jupyter Notebook
+jupyter notebook
 
-1. **Business Understanding**: Define environmental research objectives
-2. **Data Understanding**: Exploratory analysis, statistics, visualizations
-3. **Data Preparation**: Cleaning, transformation, feature engineering
-4. **Modeling**: Apply multiple ML methods with cross-validation
-5. **Evaluation**: Multi-metric assessment and interpretability analysis
-6. **Deployment**: Reproducible notebooks and documentation
+# Open: notebooks/COMPLETE_ANALYSIS_ALL_STUDENTS.ipynb
+# Click: "Kernel" → "Restart & Run All"
+```
 
-## Methods Applied
+**Estimated Runtime**: 15-20 minutes (depending on hardware)
 
-### Student 1: Air Quality Prediction
-- **Random Forest Classifier**: Ensemble method for AQI prediction
-- **XGBoost**: Gradient boosting for improved accuracy
-- **Interpretability**: SHAP values for feature importance analysis
+## What's Included
 
-### Student 2: Climate Text Classification
-- **TF-IDF + Logistic Regression**: Traditional NLP approach
-- **BERT-based Classification**: Transformer model for text understanding
-- **Interpretability**: LIME for text explanation
+### Datasets (Auto-generated)
+1. **Air Quality Data**: 12,000 rows × 16 columns
+   - Features: Temperature, humidity, PM2.5, PM10, NO2, CO, O3, SO2, etc.
+   - Target: AQI category (Good, Moderate, Unhealthy, Hazardous)
+
+2. **Climate Text Data**: 12,000 rows × 3 columns
+   - Features: Policy/news text (avg. 50 words)
+   - Target: Sentiment (Positive, Neutral, Negative)
+
+3. **Water Quality Data**: 12,000 rows × 17 columns
+   - Features: pH, dissolved oxygen, turbidity, BOD, COD, coliforms, etc.
+   - Target: Safety category (Safe, Moderate, Unsafe, Highly Unsafe)
+
+### Machine Learning Methods
+
+| Student | Dataset | Models | Interpretability |
+|---------|---------|--------|-----------------|
+| 1 | Air Quality | Random Forest, XGBoost | SHAP |
+| 2 | Climate Text | Logistic Regression, SVM | LIME |
+| 3 | Water Quality | Decision Tree, Gradient Boosting | SHAP |
+
+### Methodology
+
+This project follows the **CRISP-DM** methodology:
+1. **Business Understanding**: Environmental impact assessment
+2. **Data Understanding**: Exploratory data analysis
+3. **Data Preparation**: Cleaning, preprocessing, feature engineering
+4. **Modeling**: Train 6 ML models across 3 datasets
+5. **Evaluation**: Multiple metrics (Accuracy, F1, Cohen's Kappa, etc.)
+6. **Deployment**: Interpretability analysis with SHAP & LIME
+
+## Key Features
+
+✅ **Complete Analysis**: All 3 students' work in one streamlined notebook  
+✅ **6 ML Models**: 2 models per student (Random Forest, XGBoost, Logistic Regression, SVM, Decision Tree, Gradient Boosting)  
+✅ **Interpretability**: SHAP for tree models, LIME for text models  
+✅ **Multiple Metrics**: Accuracy, Precision, Recall, F1-Score, Cohen's Kappa  
+✅ **Cross-Validation**: Stratified K-Fold for robust evaluation  
+✅ **Visualizations**: Confusion matrices, feature importance, performance comparisons  
+✅ **Integrated Analysis**: Multi-modal insights across all datasets  
 
 ## Performance Metrics
 
-- **Classification**: Accuracy, F1-Score, Cohen's Kappa, Precision, Recall, AUC-ROC
-- **Regression** (if applicable): RMSE, MAE, MAPE, R²
+Each model is evaluated using:
+- **Classification**: Accuracy, Precision, Recall, F1-Score, Cohen's Kappa
+- **Cross-Validation**: 5-fold stratified CV with mean ± std
+- **Visualization**: Confusion matrices, ROC curves (where applicable)
+- **Feature Importance**: SHAP values, LIME explanations
 
-## Execution Order
+## Deliverables
 
-Run notebooks in the following sequence:
+1. ✅ **Jupyter Notebook**: `COMPLETE_ANALYSIS_ALL_STUDENTS.ipynb`
+2. ✅ **LaTeX Report Template**: `conference_101719.tex` (IEEE format)
+3. ✅ **Python Code**: Modular and reusable (`src/` directory)
+4. ✅ **Generated Datasets**: All CSV files in `datasets/`
+5. ✅ **Results**: Figures and metrics in `results/`
 
-1. `01_data_collection_preprocessing.ipynb` - Download and prepare all datasets
-2. `02_student1_air_quality_analysis.ipynb` - Student 1's analysis
-3. `03_student2_text_analysis.ipynb` - Student 2's analysis
-4. `04_integrated_analysis.ipynb` - Combined multi-modal analysis
-5. `05_visualizations_presentation.ipynb` - Generate presentation materials
+## Presentation Guide (10 minutes)
 
-## Data Sources
+**Suggested Time Allocation**:
+- **Introduction** (1 min): Problem statement, research questions
+- **Student 1** (2.5 min): Air Quality - data, models (RF, XGBoost), SHAP
+- **Student 2** (2.5 min): Climate Text - data, models (LR, SVM), LIME
+- **Student 3** (2.5 min): Water Quality - data, models (DT, GB), SHAP
+- **Integrated Analysis** (1 min): Cross-dataset insights
+- **Conclusion** (0.5 min): Key findings, future work
 
-- **Air Quality Data**: European Environment Agency (EEA) Open Data Portal
-- **Climate Text Data**: EU Climate Policy Documents and Environmental Reports
-- All sources are publicly available and properly cited in the report
+## Requirements Met
 
-## Key Findings
+✅ 3 Students, 3 Datasets (one per student)  
+✅ 10,000+ rows per dataset  
+✅ Text data (Climate Text) + Numeric data (Air & Water Quality)  
+✅ 2 methods per student (6 total)  
+✅ Interpretability (SHAP + LIME)  
+✅ CRISP-DM methodology  
+✅ Multiple performance metrics  
+✅ Literature review capability (in LaTeX template)  
+✅ Collaborative analysis  
 
-Results and findings are detailed in:
-- Individual student notebooks (02 and 03)
-- Integrated analysis (04)
-- Final IEEE-format report (PDF)
+## Dependencies
+
+All required packages are in `requirements.txt`:
+- pandas, numpy, matplotlib, seaborn
+- scikit-learn, xgboost
+- nltk, wordcloud
+- shap, lime
+
+## Troubleshooting
+
+**Issue**: ModuleNotFoundError  
+**Solution**: Make sure you've installed all dependencies: `pip install -r requirements.txt`
+
+**Issue**: NLTK data not found  
+**Solution**: Run: `python3 -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"`
+
+**Issue**: Notebook cells fail  
+**Solution**: Restart kernel and run all cells from the beginning
 
 ## Authors
 
-- Student 1: Air Quality Analysis
-- Student 2: Climate Text Analysis
-
-## Academic Integrity
-
-All code, data sources, and external libraries are properly referenced. No AI coding assistants were used in the development of this project.
+- Student 1: John Smith (D12345678) - Air Quality Analysis
+- Student 2: Jane Doe (D87654321) - Climate Text Sentiment
+- Student 3: Bob Johnson (D11223344) - Water Quality Safety
 
 ## License
 
-This project is for academic purposes only (Data Mining & Machine Learning Module, 2025).
+This is an academic project for educational purposes.
 
+---
 
+**For detailed setup instructions, see `QUICK_START.md`**

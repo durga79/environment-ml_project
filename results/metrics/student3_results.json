@@ -1,0 +1,12 @@
+{
+  "decision_tree": {
+    "accuracy": 0.9953449005501481,
+    "f1_score": 0.9953479162775447,
+    "cohen_kappa": 0.9898864605101942
+  },
+  "gradient_boosting": {
+    "accuracy": 0.9966144731273805,
+    "f1_score": 0.9966144731273805,
+    "cohen_kappa": 0.9926350844877051
+  }
+}
